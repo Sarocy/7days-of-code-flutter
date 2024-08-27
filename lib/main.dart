@@ -17,6 +17,17 @@ class QuizApp extends StatelessWidget {
           seedColor: const Color(0xFF357787),
           primary: const Color(0xFF1f7788),
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF1f7788),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            elevation: 5,
+          ),
+        )
       ),
       home: const WelcomeScreen(),
     );
@@ -50,15 +61,35 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GradientBackground(
-        child: Center(
-          child: const Text('Bem-vindo ao Quiz AluraPop!',
-            style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                  textAlign: TextAlign.center,),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('lib/assets/lampada.png', height: 100, width: 100),
+              Image.asset('lib/assets/foto-capa.png', height: 400, width: 600),
+              const SizedBox(height: 20),
+              const Text(
+                'Descubra quanto você sabe!',
+                style: TextStyle(
+                    fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  // Implementação da navegação virá nos próximos dias
+                },
+                child: const Text('Começar', style: TextStyle(fontSize: 20)),
+              ),
+              Image.asset('lib/assets/alura_icon.png',
+                  height: 60, width: 100),
+            ],
+          ),
         ),
-      )
+      ),
     );
   }
 }
+
+
