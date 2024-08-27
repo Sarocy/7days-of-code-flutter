@@ -1,16 +1,7 @@
-# alurapop
+# 7 Days of Code: Flutter! 📲
 
-A new Flutter project.
+## 📳 Dia 01: Configuração Inicial e Hello World
 
-## Getting Started
+Neste primeiro dia, configuramos o ambiente de desenvolvimento do projeto Flutter e criamos a estrutura básica para uma aplicação. Somado a isso, propomos a criação de uma tela exibindo um "Hello World" como seu primeiro contato com a criação de um App em Flutter.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Esta etapa estabelece a estrutura básica do projeto e as configurações necessárias para iniciarmos o desafio, facilitando o desenvolvimento das etapas nos próximos dias.
