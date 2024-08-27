@@ -104,28 +104,148 @@ class WelcomeScreen extends StatelessWidget {
 }
 
 
-class QuestionPage extends StatelessWidget {
+class Question {
+  final String questionText;
+  final List<String> options;
+  final int correctOption;
+
+  Question({
+    required this.questionText,
+    required this.options,
+    required this.correctOption,
+  });
+}
+
+List<Question> _getQuestions() {
+  return [
+    Question(
+      questionText: 'Qual série é conhecida por ter o personagem principal chamado "Walter White"?',
+      options: ['a) Better Call Saul', 'b) The Sopranos', 'c) Breaking Bad', 'd) Mad Men'],
+      correctOption: 2,
+    ),
+    Question(
+      questionText: 'Qual é o nome da cidade fictícia onde se passa "Stranger Things"?',
+      options: ['a) Hawkins', 'b) Riverdale', 'c) Gotham', 'd) Sunnydale'],
+      correctOption: 0,
+    ),
+    Question(
+      questionText: 'Qual é o nome do trono no qual os personagens lutam pelo poder em "Game of Thrones"?',
+      options: ['a) Trono de Ferro', 'b) Trono de Ouro', 'c) Trono de Vidro', 'd) Trono de Pedra'],
+      correctOption: 0,
+    ),
+    Question(
+      questionText: 'Qual personagem de "Star Wars" é conhecido por sua habilidade em usar a Força e seu sabre de luz azul?',
+      options: ['a) Luke Skywalker', 'b) Darth Vader', 'c) Han Solo', 'd) Obi-Wan Kenobi'],
+      correctOption: 3,
+    ),
+    Question(
+      questionText: 'Quem dirigiu o filme "Pulp Fiction"?',
+      options: ['a) Quentin Tarantino', 'b) Steven Spielberg', 'c) Martin Scorsese', 'd) Christopher Nolan'],
+      correctOption: 0,
+    ),
+    Question(
+      questionText: 'Qual é o nome do planeta natal de Superman?',
+      options: ['a) Krypton', 'b) Mars', 'c) Earth', 'd) Saturn'],
+      correctOption: 0,
+    ),
+
+  ];
+}
+
+class QuestionPage extends StatefulWidget {
   final int questionIndex;
   final int score;
 
   const QuestionPage({super.key, required this.questionIndex, required this.score});
 
   @override
+  State<QuestionPage> createState() => _QuestionPageState();
+}
+
+class _QuestionPageState extends State<QuestionPage> {
+  late List<Question> questions;
+  bool answered = false;
+  int? selectedOption;
+
+   @override
+   void initState() {
+     super.initState();
+     questions = _getQuestions();
+   }
+
+
+  void _onOptionSelected(int index) {
+    setState(() {
+      selectedOption = index;
+      answered = true;
+    });
+  }
+
+  void _onNextPressed() {
+    if (widget.questionIndex < questions.length - 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuestionPage(
+            questionIndex: widget.questionIndex + 1,
+            score: widget.score,
+          ),
+        ),
+      );
+    } 
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final question = questions[widget.questionIndex];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pergunta 1/6'),
-        backgroundColor: const Color(0xFF1f7788),
+        title: Text('Pergunta ${widget.questionIndex + 1}/${questions.length}'),
       ),
       body: GradientBackground(
-        child: Center(
-          child: Text('Conteúdo do nosso quiz aqui!',
-          style: Theme.of(context).textTheme.bodyLarge,),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                question.questionText,
+                style: Theme.of(context).textTheme.displayLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ...List.generate(question.options.length, (index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  child: ElevatedButton(
+                    onPressed: answered ? null : () => _onOptionSelected(index),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    ),
+                    child: Text(
+                      question.options[index],
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 20),
+              if (answered)
+                ElevatedButton(
+                  onPressed: _onNextPressed,
+                  child: const Text('Próxima'),
+                ),
+                Image.asset('lib/assets/alura_icon.png',
+                   height: 60, width: 100),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
 
 
 
