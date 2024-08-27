@@ -17,6 +17,12 @@ class QuizApp extends StatelessWidget {
           seedColor: const Color(0xFF357787),
           primary: const Color(0xFF1f7788),
         ),
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+              fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+          bodyLarge:
+              TextStyle(fontSize: 18, color: Color.fromARGB(221, 215, 207, 207)),
+        ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1f7788),
@@ -78,7 +84,12 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  // Implementação da navegação virá nos próximos dias
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const QuestionPage(questionIndex: 0, score: 0)),
+                  );
                 },
                 child: const Text('Começar', style: TextStyle(fontSize: 20)),
               ),
@@ -91,5 +102,30 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+class QuestionPage extends StatelessWidget {
+  final int questionIndex;
+  final int score;
+
+  const QuestionPage({super.key, required this.questionIndex, required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pergunta 1/6'),
+        backgroundColor: const Color(0xFF1f7788),
+      ),
+      body: GradientBackground(
+        child: Center(
+          child: Text('Conteúdo do nosso quiz aqui!',
+          style: Theme.of(context).textTheme.bodyLarge,),
+        ),
+      ),
+    );
+  }
+}
+
 
 
