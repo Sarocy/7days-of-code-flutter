@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 void main() {
   runApp(const QuizApp());
@@ -241,6 +242,16 @@ class _QuestionPageState extends State<QuestionPage> {
                     ),
                   );
                   }
+                  else {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuizCompletedPage(
+                          score: updatedScore,
+                          totalQuestions: questions.length),
+                    ),
+                  );
+                }
               },
               child: const Text('Avançar'),
             ),
@@ -331,6 +342,89 @@ class _QuestionPageState extends State<QuestionPage> {
               const SizedBox(height: 20),
               Image.asset('lib/assets/alura_icon.png',
                   height: 60, width: 100),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class QuizCompletedPage extends StatelessWidget {
+  final int score;
+  final int totalQuestions;
+
+  const QuizCompletedPage({super.key, required this.score, required this.totalQuestions});
+
+  @override
+  Widget build(BuildContext context) {
+    final correctAnswers = score;
+    final incorrectAnswers = totalQuestions - score;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Quiz Completo!'),
+        backgroundColor: Color(0xFF1f7788),
+      ),
+      body: GradientBackground(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: const Text(
+                  'Parabéns! Você completou o quiz.',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Sua pontuação: $score/$totalQuestions',
+                style: const TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 5),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: PieChart(
+                    PieChartData(
+                      sections: [
+                        PieChartSectionData(
+                          value: correctAnswers.toDouble(),
+                          title: 'Corretas',
+                          color: Colors.green,
+                          radius: 60,
+                          titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        PieChartSectionData(
+                          value: incorrectAnswers.toDouble(),
+                          title: 'Incorretas',
+                          color: Colors.red,
+                          radius: 60,
+                          titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ],
+                      borderData: FlBorderData(show: false),
+                      sectionsSpace: 0,
+                      centerSpaceRadius: 40,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 5),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  );
+                },
+                child: const Text('Jogar Novamente'),
+              ),
+              Image.asset('lib/assets/alura_icon.png', height: 60, width: 100),
+              const SizedBox(height: 5),
             ],
           ),
         ),
