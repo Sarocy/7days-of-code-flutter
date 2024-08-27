@@ -152,11 +152,13 @@ List<Question> _getQuestions() {
   ];
 }
 
+
 class QuestionPage extends StatefulWidget {
   final int questionIndex;
   final int score;
 
-  const QuestionPage({super.key, required this.questionIndex, required this.score});
+  const QuestionPage(
+      {super.key, required this.questionIndex, required this.score});
 
   @override
   State<QuestionPage> createState() => _QuestionPageState();
@@ -167,77 +169,168 @@ class _QuestionPageState extends State<QuestionPage> {
   bool answered = false;
   int? selectedOption;
 
-   @override
-   void initState() {
-     super.initState();
-     questions = _getQuestions();
-   }
 
+  // Mapa que associa o índice da pergunta com o caminho da imagem
+  final Map<int, String> _imagePaths = {
+    0: 'lib/assets/Walter-White.jpg',
+    1: 'lib/assets/stranger-things.jpg',
+    2: 'lib/assets/game_of_thrones.jpg',
+    3: 'lib/assets/star-wars.jpg',
+    4: 'lib/assets/tarantino.jpg',
+    5: 'lib/assets/superman.jpeg',
+  };
+
+
+  @override
+  void initState() {
+    super.initState();
+    questions = _getQuestions();
+  }
 
   void _onOptionSelected(int index) {
     setState(() {
       selectedOption = index;
       answered = true;
     });
+
+
+    Future.delayed(const Duration(seconds: 1), () {
+      final isCorrect = selectedOption ==
+          questions[widget.questionIndex].correctOption;
+      final updatedScore =
+          isCorrect ? widget.score + 1 : widget.score;
+      _showFeedbackDialog(isCorrect, updatedScore);
+    });
+  }
+  
+
+  void _showFeedbackDialog(bool isCorrect, int updatedScore) {
+    final imagePath =
+        _imagePaths[widget.questionIndex] ?? 'lib/assets/default.jpg';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+              child: Text(isCorrect
+                  ? 'Parabéns, você acertou!'
+                  : 'Ops, você errou...')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                  'A resposta correta é: ${questions[widget.questionIndex].options[questions[widget.questionIndex].correctOption]}'),
+              const SizedBox(height: 10),
+              Image.asset(imagePath, height: 250, width: 300),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Fecha o diálogo
+                if (widget.questionIndex < questions.length - 1) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuestionPage(
+                        questionIndex:
+                            widget.questionIndex + 1,
+                        score: updatedScore,
+                      ),
+                    ),
+                  );
+                  }
+              },
+              child: const Text('Avançar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  void _onNextPressed() {
-    if (widget.questionIndex < questions.length - 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => QuestionPage(
-            questionIndex: widget.questionIndex + 1,
-            score: widget.score,
-          ),
-        ),
-      );
-    } 
-  }
 
   @override
   Widget build(BuildContext context) {
     final question = questions[widget.questionIndex];
+    final progress =
+        (widget.questionIndex + 1) / questions.length;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pergunta ${widget.questionIndex + 1}/${questions.length}'),
+        title: Text(
+            'Pergunta ${widget.questionIndex + 1}/${questions.length}'),
+        backgroundColor: const Color(0xFF1f7788),
       ),
       body: GradientBackground(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment:
+                MainAxisAlignment.center,
+            crossAxisAlignment:
+                CrossAxisAlignment.stretch,
             children: [
-              Text(
-                question.questionText,
-                style: Theme.of(context).textTheme.displayLarge,
-                textAlign: TextAlign.center,
+              // Barra de progresso
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 10,
+                  backgroundColor: Colors.grey[800],
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 196, 168, 102)),
+                ),
               ),
-              const SizedBox(height: 20),
-              ...List.generate(question.options.length, (index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 5),
-                  child: ElevatedButton(
-                    onPressed: answered ? null : () => _onOptionSelected(index),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                    ),
+              const SizedBox(height: 40),
+              Row(
+                children: [
+                  Flexible(
+                    flex: 1,
                     child: Text(
-                      question.options[index],
-                      style: const TextStyle(fontSize: 18),
+                      question.questionText,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayLarge,
+                      textAlign: TextAlign.center,
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ...List.generate(
+                  question.options.length, (index) {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 5),
+                        child: ElevatedButton(
+                          onPressed: answered
+                              ? null
+                              : () => _onOptionSelected(index),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15,
+                                horizontal: 15),
+                          ),
+                          child: Text(
+                            question.options[index],
+                            style: const TextStyle(
+                                fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               }),
               const SizedBox(height: 20),
-              if (answered)
-                ElevatedButton(
-                  onPressed: _onNextPressed,
-                  child: const Text('Próxima'),
-                ),
-                Image.asset('lib/assets/alura_icon.png',
-                   height: 60, width: 100),
+              Image.asset('lib/assets/alura_icon.png',
+                  height: 60, width: 100),
             ],
           ),
         ),
@@ -245,7 +338,4 @@ class _QuestionPageState extends State<QuestionPage> {
     );
   }
 }
-
-
-
 

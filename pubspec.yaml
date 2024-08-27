@@ -61,6 +61,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/assets/alura_icon.png
+    - lib/assets/Walter-White.jpg
+    - lib/assets/stranger-things.jpg
+    - lib/assets/game_of_thrones.jpg
+    - lib/assets/star-wars.jpg
+    - lib/assets/tarantino.jpg
+    - lib/assets/superman.jpeg
     - lib/assets/foto-capa.png
     - lib/assets/lampada.png
 
